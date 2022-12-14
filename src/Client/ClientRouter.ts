@@ -3,6 +3,6 @@ import ClientController from './ClientController'
 
 const clientRouter = Router()
 
-clientRouter.post('register', ClientController.registerAccount)
+clientRouter.post('/register', ClientController.registerAccount)
 
 export default clientRouter
