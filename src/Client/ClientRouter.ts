@@ -6,4 +6,6 @@ const clientRouter = Router()
 clientRouter.post('/register', ClientController.registerAccount)
 clientRouter.post('/login', ClientController.login)
 
+clientRouter.get('/checkclient', ClientController.checkLoggedClient)
+
 export default clientRouter
