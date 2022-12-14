@@ -12,7 +12,6 @@ interface IAppointment {
 	appointment_date: Date
 	devilered_date?: Date
 	client: Tclient
-	successful_service?: boolean
 	form_of_payment?: TpaymentForm
 	total_payment?: number
 	createdAt: Date

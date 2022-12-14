@@ -10,7 +10,6 @@ const AppointmentSchema = model(
 		appointment_date: { Date },
 		devilered_date: Date,
 		client: Object,
-		successful_service: Boolean,
 		form_of_payment: String,
 		total_payment: Number,
 		createdAt: { Date, required: true, immutable: true, default: generateDate },
