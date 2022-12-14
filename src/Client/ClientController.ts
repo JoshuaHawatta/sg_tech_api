@@ -4,6 +4,7 @@ import bcrypt from 'bcrypt'
 
 //HELPERS
 import generateToken from '../helpers/generate-token'
+import getClientByToken from '../helpers/get-client-by-token'
 
 export default class ClientController {
 	static async registerAccount(req: Request, res: Response) {
@@ -50,5 +51,12 @@ export default class ClientController {
 		} catch (err) {
 			return res.status(500).json({ message: 'Não foi possível realizar o login no momento' })
 		}
+	}
+
+	static async checkLoggedClient(req: Request, res: Response) {
+		const tokenedClient = await getClientByToken(req, res)
+		const databaseClient = await ClientSchema.findById(tokenedClient._id).select('-password')
+
+		return res.status(200).json(databaseClient)
 	}
 }
