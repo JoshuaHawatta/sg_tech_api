@@ -1,0 +1,38 @@
+{
+	"name": "sg_tech_api",
+	"version": "1.0.0",
+	"description": "",
+	"main": "index.js",
+	"scripts": {
+		"build": "tsc -p .",
+		"start": "node ./src/server.js",
+		"dev": "tsnd --transpile-only --ignore-watch node_modules ./src/server.ts"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"dependencies": {
+		"@railway/cli": "^2.0.13",
+		"@types/jsonwebtoken": "^8.5.9",
+		"bcrypt": "^5.1.0",
+		"cookie-parser": "^1.4.6",
+		"cors": "^2.8.5",
+		"dotenv": "^16.0.3",
+		"express": "^4.18.2",
+		"jsonwebtoken": "^8.5.1",
+		"mongoose": "^6.8.0",
+		"multer": "^1.4.5-lts.1",
+		"mysql2": "^2.3.3"
+	},
+	"devDependencies": {
+		"@types/cors": "^2.8.13",
+		"@types/express": "^4.17.15",
+		"@typescript-eslint/eslint-plugin": "^5.46.1",
+		"@typescript-eslint/parser": "^5.46.1",
+		"eslint": "^8.29.0",
+		"nodemon": "^2.0.20",
+		"ts-node": "^10.9.1",
+		"ts-node-dev": "^2.0.0",
+		"typescript": "^4.9.4"
+	}
+}
