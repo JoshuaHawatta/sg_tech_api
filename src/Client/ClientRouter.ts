@@ -1,9 +1,8 @@
-import { Router, Request, Response } from 'express'
+import Router from 'express'
+import ClientController from './ClientController'
 
 const clientRouter = Router()
 
-clientRouter.get('/', (req: Request, res: Response) => {
-	return res.status(200).json({ message: 'Rotas de clientes criadas' })
-})
+clientRouter.post('register', ClientController.registerAccount)
 
 export default clientRouter
