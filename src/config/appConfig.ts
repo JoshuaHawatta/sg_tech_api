@@ -1,6 +1,7 @@
 import express, { Express } from 'express'
 import cors from 'cors'
 import mongoDBConnect from '../database/database'
+import clientRouter from '../Client/ClientRouter'
 
 const appConfig = (app: Express): void => {
 	//SOLVE_CORS
@@ -8,6 +9,9 @@ const appConfig = (app: Express): void => {
 
 	//SOLVE_JSON
 	app.use(express.json())
+
+	//ROUTES
+	app.use('/client', clientRouter)
 
 	//connect_to_DB
 	mongoDBConnect()
