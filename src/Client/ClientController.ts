@@ -1,7 +1,9 @@
 import { Request, Response } from 'express'
 import ClientSchema from './ClientSchema'
-import generateToken from '../helpers/generate-token'
 import bcrypt from 'bcrypt'
+
+//HELPERS
+import generateToken from '../helpers/generate-token'
 
 export default class ClientController {
 	static async registerAccount(req: Request, res: Response) {
@@ -29,6 +31,24 @@ export default class ClientController {
 			await generateToken(signClient, res)
 		} catch (err) {
 			return res.status(500).json({ message: 'Não coseguimos realizar seu cadastro no momento.' })
+		}
+	}
+
+	static async login(req: Request, res: Response) {
+		const { email, password } = req.body
+
+		if (!email) return res.status(422).json({ message: 'E-mail obrigatório!' })
+		else if (!password) return res.status(422).json({ message: 'Senha obrigatória!' })
+
+		const client = await ClientSchema.findOne({ email })
+
+		if (!client)
+			return res.status(422).json({ message: 'Erro! Veja se o e-mail ou a senha estão corretos!' })
+
+		try {
+			await generateToken(client, res)
+		} catch (err) {
+			return res.status(500).json({ message: 'Não foi possível realizar o login no momento' })
 		}
 	}
 }
