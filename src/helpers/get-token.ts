@@ -1,10 +1,11 @@
-import { Request } from 'express'
+import { Request, Response } from 'express'
 
-const getToken = (req: Request) => {
+const getToken = (req: Request, res: Response) => {
 	const authHeader = req.headers.authorization
-	const token = authHeader?.split(' ')[1]
 
-	return token
+	if (!authHeader) res.status(401).json({ message: 'Acesso negado!' })
+
+	return authHeader?.split(' ')[1] ?? 'INVALID_CLIENT_TOKEN'
 }
 
 export default getToken
