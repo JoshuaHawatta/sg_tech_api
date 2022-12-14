@@ -1,5 +1,7 @@
 import { Request, Response } from 'express'
 import ClientSchema from './ClientSchema'
+import generateToken from '../helpers/generate-token'
+import bcrypt from 'bcrypt'
 
 export default class ClientController {
 	static async registerAccount(req: Request, res: Response) {
@@ -13,17 +15,18 @@ export default class ClientController {
 		else if (confirmPassword !== password)
 			return res.status(422).json({ message: 'As senhas não estão iguais!' })
 
-		const existClient = await ClientSchema.find({ email: email }).select('-password')
+		const existClient = await ClientSchema.findOne({ email: email }).select('-password')
 
-		if (existClient.length > 0)
-			return res.status(422).json({ message: 'Este e-mail já está em uso!' })
+		if (existClient) return res.status(422).json({ message: 'Este e-mail já está em uso!' })
 
-		const client = new ClientSchema({ name, email, phone, password })
+		const salt = await bcrypt.genSalt(16)
+		const encryptedPassword = await bcrypt.hash(password, salt)
+
+		const client = new ClientSchema({ name, email, phone, password: encryptedPassword })
 
 		try {
 			const signClient = await client.save()
-
-			return res.status(201).json({ message: 'Conta criada com sucesso!', signClient })
+			await generateToken(signClient, res)
 		} catch (err) {
 			return res.status(500).json({ message: 'Não coseguimos realizar seu cadastro no momento.' })
 		}
