@@ -1,10 +1,13 @@
 import jtw from 'jsonwebtoken'
 import { Response } from 'express'
-import { ObjectId } from 'mongoose'
+import { Types } from 'mongoose'
 
-type TClient = { _id: ObjectId; name: string }
+type TClient = {
+	_id: Types.ObjectId
+	name: string
+}
 
-const generateToken = (client: TClient, res: Response) => {
+const generateToken = async (client: TClient, res: Response) => {
 	const newToken = jtw.sign({ name: client.name, id: client._id }, `${process.env.API_SECRET}`, {
 		expiresIn: '8 hours',
 	})
