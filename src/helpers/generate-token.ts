@@ -7,9 +7,9 @@ type TClient = {
 	name: string
 }
 
-const generateToken = async (client: TClient, res: Response) => {
-	const newToken = jtw.sign({ name: client.name, _id: client._id }, `${process.env.API_SECRET}`, {
-		expiresIn: '8 hours',
+const generateToken = (client: TClient, res: Response) => {
+	const newToken = jtw.sign({ name: client.name, _id: client._id }, process.env.API_SECRET as string, {
+		expiresIn: '4 hours',
 	})
 
 	return res.status(200).json({ message: 'Bem vindo(a) ao sistema!', newToken, _id: client._id })
