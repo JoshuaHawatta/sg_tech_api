@@ -46,6 +46,11 @@ export default class ClientController {
 		if (!client)
 			return res.status(422).json({ message: 'Erro! Veja se o e-mail ou a senha estão corretos!' })
 
+		const matchPasswords = await bcrypt.compare(password, client.password)
+
+		if (!matchPasswords)
+			return res.status(422).json({ message: 'Senha digitada não é igual a cadastrada!' })
+
 		try {
 			await generateToken(client, res)
 		} catch (err) {
