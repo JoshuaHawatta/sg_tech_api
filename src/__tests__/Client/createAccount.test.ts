@@ -2,17 +2,10 @@ import ClientSchema from '../../Client/ClientSchema'
 import generateDate from '../../helpers/generate-date'
 import { Request, Response } from 'express'
 import ClientController from '../../Client/ClientController'
+import IClient from '../../Client/IClient'
 
 //MOCKS
 jest.mock('../../Client/ClientController')
-
-type TClient = {
-	name: string
-	email: string
-	password: string
-	createdAt: Date
-	updatedAt: Date
-}
 
 let req: Request
 let res: Response
@@ -55,7 +48,7 @@ describe('Client should be able to create account when...', () => {
 			updatedAt: generateDate(),
 		}))
 
-		const mockedNewUser = (await ClientController.registerAccount(req, res)) as unknown as TClient
+		const mockedNewUser = (await ClientController.registerAccount(req, res)) as unknown as IClient
 		const confirmPassword = 'randompassword'
 
 		expect(mockedNewUser).toHaveProperty('name')
@@ -164,7 +157,7 @@ describe('Client should NOT be able to create account when...', () => {
 			.mockImplementationOnce(() => ({ name: 'randomUser', email: 'mockeduser@email.com' }))
 
 		const mockedDBUser = await ClientSchema.findOne()
-		const signedUser = (await ClientController.registerAccount(req, res)) as unknown as TClient
+		const signedUser = (await ClientController.registerAccount(req, res)) as unknown as IClient
 
 		const checkIfUserExistsOnDb = () => {
 			if (mockedDBUser?.email === signedUser.email)
