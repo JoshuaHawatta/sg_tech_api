@@ -5,6 +5,7 @@ import bcrypt from 'bcrypt'
 //HELPERS
 import generateToken from '../helpers/generate-token'
 import getClientByToken from '../helpers/get-client-by-token'
+import generateDate from '../helpers/generate-date'
 
 export default class ClientController {
 	static async registerAccount(req: Request, res: Response) {
@@ -25,7 +26,14 @@ export default class ClientController {
 		const salt = await bcrypt.genSalt(16)
 		const encryptedPassword = await bcrypt.hash(password, salt)
 
-		const client = new ClientSchema({ name, email, phone, password: encryptedPassword })
+		const client = new ClientSchema({
+			name,
+			email,
+			phone,
+			password: encryptedPassword,
+			createdAt: generateDate(),
+			updatedAt: generateDate(),
+		})
 
 		try {
 			const signClient = await client.save()
