@@ -3,9 +3,8 @@ import ClientSchema from './ClientSchema'
 import bcrypt from 'bcrypt'
 
 //HELPERS
-import generateToken from '../helpers/generate-token'
-import getClientByToken from '../helpers/get-client-by-token'
 import generateDate from '../helpers/generate-date'
+import JwtTokenHandler from '../helpers/Jwt-token-handler'
 
 export default class ClientController {
 	static async registerAccount(req: Request, res: Response) {
@@ -37,7 +36,7 @@ export default class ClientController {
 
 		try {
 			const signClient = await client.save()
-			await generateToken(signClient, res)
+			JwtTokenHandler.generateToken(signClient, res)
 		} catch (err) {
 			return res.status(500).json({ message: 'Não coseguimos realizar seu cadastro no momento.' })
 		}
@@ -60,14 +59,14 @@ export default class ClientController {
 			return res.status(422).json({ message: 'Senha digitada não é igual a cadastrada!' })
 
 		try {
-			await generateToken(client, res)
+			JwtTokenHandler.generateToken(client, res)
 		} catch (err) {
 			return res.status(500).json({ message: 'Não foi possível realizar o login no momento' })
 		}
 	}
 
 	static async checkLoggedClient(req: Request, res: Response) {
-		const tokenedClient = await getClientByToken(req, res)
+		const tokenedClient = await JwtTokenHandler.getClientByToken(req, res)
 		const databaseClient = await ClientSchema.findById(tokenedClient._id).select('-password')
 
 		return res.status(200).json(databaseClient)
