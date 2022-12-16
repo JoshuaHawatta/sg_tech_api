@@ -3,9 +3,11 @@ import generateDate from '../../helpers/generate-date'
 import { Request, Response } from 'express'
 import ClientController from '../../Client/ClientController'
 import IClient from '../../Client/IClient'
+import JwtTokenHandler from '../../helpers/jwt-token-handler'
 
 //MOCKS
 jest.mock('../../Client/ClientController')
+jest.mock('../../helpers/jwt-token-handler')
 
 let req: Request
 let res: Response
