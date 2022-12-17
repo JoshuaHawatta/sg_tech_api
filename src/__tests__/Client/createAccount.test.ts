@@ -3,7 +3,8 @@ import generateDate from '../../helpers/generate-date'
 import { Request, Response } from 'express'
 import ClientController from '../../Client/ClientController'
 import IClient from '../../Client/IClient'
-import JwtTokenHandler from '../../helpers/jwt-token-handler'
+import JwtTokenHandler from '../../helpers/Jwt-token-handler'
+import bcrypt from 'bcrypt'
 
 //MOCKS
 jest.mock('../../Client/ClientController')
@@ -167,5 +168,29 @@ describe('Client should NOT be able to create account when...', () => {
 		}
 
 		expect(checkIfUserExistsOnDb).toThrowError('Este e-mail já está sendo usado!')
+	})
+})
+
+//FINAL_TESTS
+describe('If Client can create account, this should happen...', () => {
+	afterEach(() => jest.clearAllMocks())
+
+	test('A new JWT should be generated', async () => {
+		const mockedTokenGeneration = (JwtTokenHandler.generateToken = jest
+			.fn()
+			.mockImplementation(() => ({ message: 'Token gerado com sucesso!' })))
+
+		expect(mockedTokenGeneration()).toStrictEqual({ message: 'Token gerado com sucesso!' })
+	})
+
+	test('The choosen password should be encrypted', async () => {
+		const password = 'randomPassword'
+
+		const salt = await bcrypt.genSalt(12)
+
+		bcrypt.hash = jest.fn().mockImplementation(() => ({ message: 'Senha criptografada!' }))
+		const encryptedPassword = await bcrypt.hash(password, salt)
+
+		expect(encryptedPassword).toStrictEqual({ message: 'Senha criptografada!' })
 	})
 })
