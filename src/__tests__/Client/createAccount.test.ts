@@ -6,9 +6,7 @@ import IClient from '../../Client/IClient'
 import JwtTokenHandler from '../../helpers/Jwt-token-handler'
 import bcrypt from 'bcrypt'
 
-//MOCKS
-jest.mock('../../Client/ClientController')
-jest.mock('../../helpers/jwt-token-handler')
+import { getMockReq } from '@jest-mock/express'
 
 let req: Request
 let res: Response
@@ -18,54 +16,34 @@ describe('Client should be able to create account when...', () => {
 	afterEach(() => jest.clearAllMocks())
 
 	test('all fields are are filled', async () => {
-		ClientController.registerAccount = jest.fn().mockImplementationOnce(() => ({
-			name: 'randomUser',
-			email: 'randomuser@email.com',
-			password: 'randompassword',
-			createdAt: generateDate(),
-			updatedAt: generateDate(),
-		}))
+		const mockedReq = getMockReq({
+			body: {
+				name: 'randomUser',
+				email: 'randomuser@email.com',
+				password: 'randompassword',
+				createdAt: generateDate(),
+				updatedAt: generateDate(),
+			},
+		})
 
-		const mockedNewUser = await ClientController.registerAccount(req, res)
-		const confirmPassword = 'randompassword'
-
-		const mockedUserToInsert = new ClientSchema(mockedNewUser)
-
-		expect(mockedNewUser).toHaveProperty('name')
-		expect(mockedNewUser).toHaveProperty('email')
-		expect(mockedNewUser).toHaveProperty('password')
-		expect(confirmPassword).not.toBe('')
-		expect(mockedNewUser).toHaveProperty('createdAt')
-		expect(mockedNewUser).toHaveProperty('updatedAt')
-
-		mockedUserToInsert.save = jest.fn().mockImplementation(() => ({}))
-		mockedUserToInsert.save()
+		expect(mockedReq.body).toHaveProperty('name')
+		expect(mockedReq.body).toHaveProperty('email')
+		expect(mockedReq.body).toHaveProperty('password')
+		expect(mockedReq.body).toHaveProperty('createdAt')
+		expect(mockedReq.body).toHaveProperty('updatedAt')
 	})
 
 	test('when passwords are equal', async () => {
 		ClientController.registerAccount = jest.fn().mockImplementationOnce(() => ({
-			name: 'randomUser',
-			email: 'randomuser@email.com',
 			password: 'randompassword',
-			createdAt: generateDate(),
-			updatedAt: generateDate(),
 		}))
 
 		const mockedNewUser = (await ClientController.registerAccount(req, res)) as unknown as IClient
 		const confirmPassword = 'randompassword'
 
-		expect(mockedNewUser).toHaveProperty('name')
-		expect(mockedNewUser).toHaveProperty('email')
 		expect(mockedNewUser).toHaveProperty('password')
 		expect(confirmPassword).not.toBe('')
 		expect(confirmPassword).toStrictEqual(mockedNewUser.password)
-		expect(mockedNewUser).toHaveProperty('createdAt')
-		expect(mockedNewUser).toHaveProperty('updatedAt')
-
-		const mockedUserToInsert = new ClientSchema(mockedNewUser)
-
-		mockedUserToInsert.save = jest.fn().mockImplementation(() => ({}))
-		mockedUserToInsert.save()
 	})
 
 	test('Has no user registered with choosen e-mail', async () => {
