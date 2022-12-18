@@ -1,6 +1,6 @@
 import Router from 'express'
 import ClientController from './ClientController'
-import JwtTokenHandler from '../helpers/jwt-token-handler'
+import JwtTokenHandler from '../helpers/Jwt-token-handler'
 
 const clientRouter = Router()
 
