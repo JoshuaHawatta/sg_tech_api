@@ -7,7 +7,7 @@ import generateDate from '../helpers/generate-date'
 import JwtTokenHandler from '../helpers/Jwt-token-handler'
 
 export default class ClientController {
-	static async registerAccount(req: Request, res: Response) {
+	static async registerAccount(req: Request, res: Response): Promise<Response | void> {
 		const { name, email, phone, password, confirmPassword } = req.body
 
 		if (!name) return res.status(422).json({ message: 'Nome obrigatório!' })
@@ -42,7 +42,7 @@ export default class ClientController {
 		}
 	}
 
-	static async login(req: Request, res: Response) {
+	static async login(req: Request, res: Response): Promise<Response | void> {
 		const { email, password } = req.body
 
 		if (!email) return res.status(422).json({ message: 'E-mail obrigatório!' })
@@ -65,7 +65,7 @@ export default class ClientController {
 		}
 	}
 
-	static async checkLoggedClient(req: Request, res: Response) {
+	static async checkLoggedClient(req: Request, res: Response): Promise<Response> {
 		const tokenedClient = await JwtTokenHandler.getClientByToken(req, res)
 		const databaseClient = await ClientSchema.findById(tokenedClient._id).select('-password')
 
