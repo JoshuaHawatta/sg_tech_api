@@ -6,9 +6,7 @@
 	"scripts": {
 		"build": "tsc -p .",
 		"start": "node ./dist/server.js",
-		"dev": "tsnd --transpile-only --ignore-watch node_modules ./src/server.ts",
-		"test": "jest --maxWorkers=50%",
-		"test:watch": "jest --watch --maxWorkers=25%"
+		"dev": "tsnd --transpile-only --ignore-watch node_modules ./src/server.ts"
 	},
 	"keywords": [],
 	"author": "",
