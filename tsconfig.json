@@ -1,6 +1,5 @@
 {
 	"compilerOptions": {
-		"watch": true,
 		"target": "es2017",
 		"lib": ["es6"],
 		"module": "commonjs",
