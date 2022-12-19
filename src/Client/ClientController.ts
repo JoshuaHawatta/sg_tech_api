@@ -7,7 +7,7 @@ import generateDate from '../helpers/generate-date'
 import JwtTokenHandler from '../helpers/Jwt-token-handler'
 
 export default class ClientController {
-	static async registerAccount(req: Request, res: Response): Promise<Response | void> {
+	static async registerAccount(req: Request, res: Response): Promise<Response> {
 		const { name, email, phone, password, confirmPassword } = req.body
 
 		if (!name) return res.status(422).json({ message: 'Nome obrigatório!' })
@@ -36,13 +36,13 @@ export default class ClientController {
 
 		try {
 			const signClient = await client.save()
-			JwtTokenHandler.generateToken(signClient, res)
+			return JwtTokenHandler.generateToken(signClient, res)
 		} catch (err) {
 			return res.status(500).json({ message: 'Não coseguimos realizar seu cadastro no momento.' })
 		}
 	}
 
-	static async login(req: Request, res: Response): Promise<Response | void> {
+	static async login(req: Request, res: Response): Promise<Response> {
 		const { email, password } = req.body
 
 		if (!email) return res.status(422).json({ message: 'E-mail obrigatório!' })
@@ -59,7 +59,7 @@ export default class ClientController {
 			return res.status(422).json({ message: 'Senha digitada não é igual a cadastrada!' })
 
 		try {
-			JwtTokenHandler.generateToken(client, res)
+			return JwtTokenHandler.generateToken(client, res)
 		} catch (err) {
 			return res.status(500).json({ message: 'Não foi possível realizar o login no momento' })
 		}
@@ -70,5 +70,48 @@ export default class ClientController {
 		const databaseClient = await ClientSchema.findById(tokenedClient._id).select('-password')
 
 		return res.status(200).json(databaseClient)
+	}
+
+	static async updateAccountData(req: Request, res: Response): Promise<Response> {
+		const { name, email, phone, password, confirmPassword } = req.body
+		const image = req.file?.filename as string
+
+		const loggedClient = await JwtTokenHandler.getClientByToken(req, res)
+
+		if (!name) return res.status(422).json({ message: 'Nome obrigatório!' })
+		else if (!email) return res.status(422).json({ message: 'E-mail obrigatório!' })
+		else if (!phone) return res.status(422).json({ message: 'Telefone obrigatório!' })
+		else if (!password) return res.status(422).json({ message: 'Senha obrigatória!' })
+		else if (!confirmPassword) return res.status(422).json({ message: 'Confirme sua senha!' })
+		else if (confirmPassword !== password)
+			return res.status(422).json({ message: 'As senhas não estão iguais!' })
+
+		const clientNewData = {
+			name,
+			email,
+			phone,
+			image,
+			password,
+			updatedAt: generateDate(),
+		}
+
+		if (password === confirmPassword && password !== null) {
+			const salt = await bcrypt.genSalt(16)
+			const newHashedPassword = await bcrypt.hash(password, salt)
+
+			clientNewData.password = newHashedPassword
+		}
+
+		try {
+			await ClientSchema.findOneAndUpdate(
+				{ _id: loggedClient._id },
+				{ $set: clientNewData },
+				{ new: true }
+			)
+
+			return res.status(200).json({ message: 'Dados atualizados com sucesso!' })
+		} catch (err) {
+			return res.status(500).json({ message: 'Não foi possível atualizar seus dados no momento!' })
+		}
 	}
 }
