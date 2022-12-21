@@ -117,7 +117,7 @@ export default class ClientController {
 		}
 	}
 
-	static async deleteAcccount(req: Request, res: Response): Promise<Response> {
+	static async deleteAccount(req: Request, res: Response): Promise<Response> {
 		const loggedClient = await JwtTokenHandler.getClientByToken(req, res)
 
 		try {

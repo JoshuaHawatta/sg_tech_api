@@ -15,7 +15,7 @@ clientRouter.patch(
 	ClientController.updateAccountData
 )
 
-clientRouter.delete('/deleteaccount', JwtTokenHandler.verifyToken, ClientController.deleteAcccount)
+clientRouter.delete('/deleteaccount', JwtTokenHandler.verifyToken, ClientController.deleteAccount)
 
 clientRouter.get('/checkclient', JwtTokenHandler.verifyToken, ClientController.checkLoggedClient)
 
