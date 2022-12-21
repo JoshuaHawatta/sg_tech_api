@@ -74,7 +74,7 @@ export default class ClientController {
 
 	static async updateAccountData(req: Request, res: Response): Promise<Response> {
 		const { name, email, phone, password, confirmPassword } = req.body
-		const image = req.file?.filename as string
+		const image = req.file?.filename
 
 		const loggedClient = await JwtTokenHandler.getClientByToken(req, res)
 
