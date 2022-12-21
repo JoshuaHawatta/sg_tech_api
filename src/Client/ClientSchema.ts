@@ -11,7 +11,7 @@ const ClientSchema = model(
 		phone: { type: Number, required: true },
 		password: { type: String, required: true },
 		image: String,
-		my_appointments: Object,
+		my_appointments: Array,
 		createdAt: { type: Date, required: true, immutable: true, default: generateDate },
 		updatedAt: { type: Date, required: true, default: generateDate },
 	})
