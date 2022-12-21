@@ -17,6 +17,8 @@ export default class ClientController {
 		else if (!confirmPassword) return res.status(422).json({ message: 'Confirme sua senha!' })
 		else if (confirmPassword !== password)
 			return res.status(422).json({ message: 'As senhas não estão iguais!' })
+		else if (password === name)
+			return res.status(422).json({ message: 'A senha não pode ser igual ao nome!' })
 
 		const existClient = await ClientSchema.findOne({ email: email }).select('-password')
 
@@ -112,6 +114,17 @@ export default class ClientController {
 			return res.status(200).json({ message: 'Dados atualizados com sucesso!' })
 		} catch (err) {
 			return res.status(500).json({ message: 'Não foi possível atualizar seus dados no momento!' })
+		}
+	}
+
+	static async deleteAcccount(req: Request, res: Response): Promise<Response> {
+		const loggedClient = await JwtTokenHandler.getClientByToken(req, res)
+
+		try {
+			await ClientSchema.findByIdAndDelete(loggedClient._id)
+			return res.status(200).json({ message: 'Conta deletada com sucesso!' })
+		} catch (err) {
+			return res.status(500).json({ message: 'Não foi possível deletar sua conta no momento!' })
 		}
 	}
 }
