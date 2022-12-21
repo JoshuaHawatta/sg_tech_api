@@ -6,7 +6,7 @@ interface IClient {
 	phone: number
 	password: string
 	image?: string
-	my_appointments?: IAppointment
+	my_appointments?: IAppointment[]
 	createdAt: Date
 	updatedAt: Date
 }
