@@ -12,6 +12,7 @@ const ClientSchema = model(
 		password: { type: String, required: true },
 		image: String,
 		my_appointments: Object,
+		accesses: { type: Array, default: ['Client'] },
 		createdAt: { type: Date, required: true, immutable: true, default: generateDate },
 		updatedAt: { type: Date, required: true, default: generateDate },
 	})
