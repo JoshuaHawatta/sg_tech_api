@@ -8,8 +8,8 @@ interface IClient {
 	image?: string
 	my_appointments?: IAppointment[]
 	accesses: ['Client', 'Seller'?]
-	createdAt: Date
-	updatedAt: Date
+	readonly createdAt: Date
+	readonly updatedAt: Date
 }
 
 export default IClient

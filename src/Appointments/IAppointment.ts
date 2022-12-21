@@ -14,8 +14,8 @@ interface IAppointment {
 	client: Tclient
 	form_of_payment?: TpaymentForm
 	total_payment?: number
-	createdAt: Date
-	updatedAt: Date
+	readonly createdAt: Date
+	readonly updatedAt: Date
 }
 
 export default IAppointment
