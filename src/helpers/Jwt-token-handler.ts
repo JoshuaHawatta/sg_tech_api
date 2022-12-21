@@ -1,12 +1,20 @@
 import { Request, Response, NextFunction } from 'express'
 import jwt from 'jsonwebtoken'
-import ItokenedClient from '../Client/interfaces/ITokenedClient'
+import { Types } from 'mongoose'
+
+type ItokenedClient = {
+	_id: Types.ObjectId | string
+	accesses: ['Client', 'Seller'?]
+	name: string
+}
+
+const apiSecret = process.env.API_SECRET as string
 
 export default class JwtTokenHandler {
 	static generateToken(client: ItokenedClient, res: Response): Response {
 		const newToken = jwt.sign(
-			{ name: client.name, _id: client._id },
-			process.env.API_SECRET as string,
+			{ name: client.name, _id: client._id, accesses: client.accesses },
+			apiSecret,
 
 			{ expiresIn: '4 hours' }
 		)
@@ -25,7 +33,7 @@ export default class JwtTokenHandler {
 
 		if (!token) res.status(401).json({ message: 'Acesso negado!' })
 
-		return jwt.verify(token, process.env.API_SECRET as string) as Promise<ItokenedClient>
+		return jwt.verify(token, apiSecret) as Promise<ItokenedClient>
 	}
 
 	static async verifyToken(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
@@ -34,7 +42,7 @@ export default class JwtTokenHandler {
 		if (!token) res.status(401).json({ message: 'Acesso negado!' })
 
 		try {
-			const decodedClient = jwt.verify(token, process.env.API_SECRET as string)
+			const decodedClient = jwt.verify(token, apiSecret)
 			console.log(decodedClient)
 
 			return next()
