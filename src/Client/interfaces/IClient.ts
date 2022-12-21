@@ -7,6 +7,7 @@ interface IClient {
 	password: string
 	image?: string
 	my_appointments?: IAppointment[]
+	accesses: ['Client', 'Seller'?]
 	createdAt: Date
 	updatedAt: Date
 }
