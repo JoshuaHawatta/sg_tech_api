@@ -1,9 +1,9 @@
 import { Schema, model } from 'mongoose'
-import IClient from './interfaces/IClient'
+import IClient from './interfaces/IUser'
 import generateDate from '../helpers/generate-date'
 
-const ClientSchema = model(
-	'Client',
+const UserSchema = model(
+	'User',
 
 	new Schema<IClient>({
 		name: { type: String, required: true },
@@ -18,4 +18,4 @@ const ClientSchema = model(
 	})
 )
 
-export default ClientSchema
+export default UserSchema

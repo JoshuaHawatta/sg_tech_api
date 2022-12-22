@@ -1,4 +1,4 @@
-type Tclient = {
+type Tuser = {
 	name: string
 	email: string
 	phone: number
@@ -11,7 +11,7 @@ interface IAppointment {
 	service_type: string
 	appointment_date: Date
 	devilered_date?: Date
-	client: Tclient
+	client: Tuser
 	form_of_payment?: TpaymentForm
 	total_payment?: number
 	readonly createdAt: Date

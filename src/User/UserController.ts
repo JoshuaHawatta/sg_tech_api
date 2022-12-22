@@ -1,12 +1,12 @@
 import { Request, Response } from 'express'
-import ClientSchema from './ClientSchema'
+import UserSchema from './UserSchema'
 import bcrypt from 'bcrypt'
 
 //HELPERS
 import generateDate from '../helpers/generate-date'
 import JwtTokenHandler from '../helpers/Jwt-token-handler'
 
-export default class ClientController {
+export default class UserController {
 	static async registerAccount(req: Request, res: Response): Promise<Response> {
 		const { name, email, phone, password, confirmPassword } = req.body
 
@@ -20,14 +20,14 @@ export default class ClientController {
 		else if (password === name)
 			return res.status(422).json({ message: 'A senha não pode ser igual ao nome!' })
 
-		const existClient = await ClientSchema.findOne({ email: email }).select('-password')
+		const existUser = await UserSchema.findOne({ email: email }).select('-password')
 
-		if (existClient) return res.status(422).json({ message: 'Este e-mail já está em uso!' })
+		if (existUser) return res.status(422).json({ message: 'Este e-mail já está em uso!' })
 
 		const salt = await bcrypt.genSalt(16)
 		const encryptedPassword = await bcrypt.hash(password, salt)
 
-		const client = new ClientSchema({
+		const user = new UserSchema({
 			name,
 			email,
 			phone,
@@ -37,8 +37,8 @@ export default class ClientController {
 		})
 
 		try {
-			const signClient = await client.save()
-			return JwtTokenHandler.generateToken(signClient, res)
+			const signUser = await user.save()
+			return JwtTokenHandler.generateToken(signUser, res)
 		} catch (err) {
 			return res.status(500).json({ message: 'Não coseguimos realizar seu cadastro no momento.' })
 		}
@@ -50,35 +50,35 @@ export default class ClientController {
 		if (!email) return res.status(422).json({ message: 'E-mail obrigatório!' })
 		else if (!password) return res.status(422).json({ message: 'Senha obrigatória!' })
 
-		const client = await ClientSchema.findOne({ email })
+		const user = await UserSchema.findOne({ email })
 
-		if (!client)
+		if (!user)
 			return res.status(422).json({ message: 'Erro! Veja se o e-mail ou a senha estão corretos!' })
 
-		const matchPasswords = await bcrypt.compare(password, client.password)
+		const matchPasswords = await bcrypt.compare(password, user.password)
 
 		if (!matchPasswords)
 			return res.status(422).json({ message: 'Senha digitada não é igual a cadastrada!' })
 
 		try {
-			return JwtTokenHandler.generateToken(client, res)
+			return JwtTokenHandler.generateToken(user, res)
 		} catch (err) {
 			return res.status(500).json({ message: 'Não foi possível realizar o login no momento' })
 		}
 	}
 
 	static async checkLoggedClient(req: Request, res: Response): Promise<Response> {
-		const tokenedClient = await JwtTokenHandler.getClientByToken(req, res)
-		const databaseClient = await ClientSchema.findById(tokenedClient._id).select('-password')
+		const tokenedUser = await JwtTokenHandler.getClientByToken(req, res)
+		const databaseUser = await UserSchema.findById(tokenedUser._id).select('-password')
 
-		return res.status(200).json(databaseClient)
+		return res.status(200).json(databaseUser)
 	}
 
 	static async updateAccountData(req: Request, res: Response): Promise<Response> {
 		const { name, email, phone, password, confirmPassword } = req.body
 		const image = req.file?.filename
 
-		const loggedClient = await JwtTokenHandler.getClientByToken(req, res)
+		const loggedUser = await JwtTokenHandler.getClientByToken(req, res)
 
 		if (!name) return res.status(422).json({ message: 'Nome obrigatório!' })
 		else if (!email) return res.status(422).json({ message: 'E-mail obrigatório!' })
@@ -88,7 +88,7 @@ export default class ClientController {
 		else if (confirmPassword !== password)
 			return res.status(422).json({ message: 'As senhas não estão iguais!' })
 
-		const clientNewData = {
+		const userNewData = {
 			name,
 			email,
 			phone,
@@ -101,13 +101,13 @@ export default class ClientController {
 			const salt = await bcrypt.genSalt(16)
 			const newHashedPassword = await bcrypt.hash(password, salt)
 
-			clientNewData.password = newHashedPassword
+			userNewData.password = newHashedPassword
 		}
 
 		try {
-			await ClientSchema.findOneAndUpdate(
-				{ _id: loggedClient._id },
-				{ $set: clientNewData },
+			await UserSchema.findOneAndUpdate(
+				{ _id: loggedUser._id },
+				{ $set: userNewData },
 				{ new: true }
 			)
 
@@ -118,10 +118,10 @@ export default class ClientController {
 	}
 
 	static async deleteAccount(req: Request, res: Response): Promise<Response> {
-		const loggedClient = await JwtTokenHandler.getClientByToken(req, res)
+		const loggedUser = await JwtTokenHandler.getClientByToken(req, res)
 
 		try {
-			await ClientSchema.findByIdAndDelete(loggedClient._id)
+			await UserSchema.findByIdAndDelete(loggedUser._id)
 			return res.status(200).json({ message: 'Conta deletada com sucesso!' })
 		} catch (err) {
 			return res.status(500).json({ message: 'Não foi possível deletar sua conta no momento!' })

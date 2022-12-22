@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express'
 import jwt from 'jsonwebtoken'
 import { Types } from 'mongoose'
 
-type ItokenedClient = {
+type ItokenedUser = {
 	_id: Types.ObjectId | string
 	accesses: ['Client', 'Seller'?]
 	name: string
@@ -11,7 +11,7 @@ type ItokenedClient = {
 const apiSecret = process.env.API_SECRET as string
 
 export default class JwtTokenHandler {
-	static generateToken(client: ItokenedClient, res: Response): Response {
+	static generateToken(client: ItokenedUser, res: Response): Response {
 		const newToken = jwt.sign(
 			{ name: client.name, _id: client._id, accesses: client.accesses },
 			apiSecret,
@@ -28,12 +28,12 @@ export default class JwtTokenHandler {
 		return authHeader?.split(' ')[1] ?? 'INVALID_CLIENT_TOKEN'
 	}
 
-	static async getClientByToken(req: Request, res: Response): Promise<ItokenedClient> {
+	static async getClientByToken(req: Request, res: Response): Promise<ItokenedUser> {
 		const token = await JwtTokenHandler.getToken(req)
 
 		if (!token) res.status(401).json({ message: 'Acesso negado!' })
 
-		return jwt.verify(token, apiSecret) as Promise<ItokenedClient>
+		return jwt.verify(token, apiSecret) as Promise<ItokenedUser>
 	}
 
 	static async verifyToken(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
