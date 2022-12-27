@@ -1,17 +1,16 @@
 import { model, Schema } from 'mongoose'
 import generateDate from '../helpers/generate-date'
-import IAppointment from '../interfaces/IAppointments'
+import IAppointment from '../interfaces/IAppointment'
 
 const AppointmentSchema = model(
-	'Appointment',
+	'Appointments',
 
 	new Schema<IAppointment>({
 		service_type: { type: String, required: true },
-		appointment_date: { type: Date },
-		devilered_date: Date,
+		appointment_date: { type: Date, required: true, immutable: true },
+		devilered_date: { type: Date, immutable: true },
 		client: Object,
-		form_of_payment: String,
-		total_payment: Number,
+		payment: Object,
 		createdAt: { type: Date, required: true, immutable: true, default: generateDate },
 		updatedAt: { type: Date, required: true, default: generateDate },
 	})
