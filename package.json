@@ -1,16 +1,24 @@
 {
 	"name": "sg_tech_api",
-	"version": "1.0.0",
-	"description": "",
+	"version": "1.4.0",
+	"description": "A simple Appointment API for the SG Tech company.",
 	"main": "index.js",
 	"scripts": {
 		"build": "tsc -p .",
 		"start": "node ./dist/server.js",
 		"dev": "tsnd --transpile-only --ignore-watch node_modules ./src/server.ts"
 	},
-	"keywords": [],
-	"author": "",
-	"license": "ISC",
+	"keywords": [
+		"API",
+		"api",
+		"typescript",
+		"express",
+		"node",
+		"js",
+		"company"
+	],
+	"author": "Joshua Hawatta <joshuahawatta@gmail.com>",
+	"license": "MIT",
 	"dependencies": {
 		"bcrypt": "^5.1.0",
 		"cookie-parser": "^1.4.6",
