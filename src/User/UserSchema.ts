@@ -3,7 +3,7 @@ import IClient from '../interfaces/IUser'
 import generateDate from '../helpers/generate-date'
 
 const UserSchema = model(
-	'User',
+	'Users',
 
 	new Schema<IClient>({
 		name: { type: String, required: true },
