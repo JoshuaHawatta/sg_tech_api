@@ -1,4 +1,4 @@
-import IAppointment from './IAppointments'
+import IAppointment from './IAppointment'
 
 interface IClient {
 	name: string
