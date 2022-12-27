@@ -1,4 +1,4 @@
-import IAppointment from '../../Appointments/IAppointment'
+import IAppointment from './IAppointments'
 
 interface IClient {
 	name: string
@@ -6,7 +6,7 @@ interface IClient {
 	phone: number
 	password: string
 	image?: string
-	my_appointments?: IAppointment[]
+	appointments: IAppointment[]
 	accesses: ['Client', 'Seller'?]
 	readonly createdAt: Date
 	readonly updatedAt: Date
