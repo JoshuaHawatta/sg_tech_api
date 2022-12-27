@@ -1,5 +1,5 @@
 import { Schema, model } from 'mongoose'
-import IClient from './interfaces/IUser'
+import IClient from '../interfaces/IUser'
 import generateDate from '../helpers/generate-date'
 
 const UserSchema = model(
@@ -11,7 +11,7 @@ const UserSchema = model(
 		phone: { type: Number, required: true },
 		password: { type: String, required: true },
 		image: String,
-		my_appointments: Array,
+		appointments: Array,
 		accesses: { type: Array, default: ['Client'] },
 		createdAt: { type: Date, required: true, immutable: true, default: generateDate },
 		updatedAt: { type: Date, required: true, default: generateDate },

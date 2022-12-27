@@ -67,8 +67,8 @@ export default class UserController {
 		}
 	}
 
-	static async checkLoggedClient(req: Request, res: Response): Promise<Response> {
-		const tokenedUser = await JwtTokenHandler.getClientByToken(req, res)
+	static async checkLoggedUser(req: Request, res: Response): Promise<Response> {
+		const tokenedUser = await JwtTokenHandler.getUserByToken(req, res)
 		const databaseUser = await UserSchema.findById(tokenedUser._id).select('-password')
 
 		return res.status(200).json(databaseUser)
@@ -78,7 +78,7 @@ export default class UserController {
 		const { name, email, phone, password, confirmPassword } = req.body
 		const image = req.file?.filename
 
-		const loggedUser = await JwtTokenHandler.getClientByToken(req, res)
+		const loggedUser = await JwtTokenHandler.getUserByToken(req, res)
 
 		if (!name) return res.status(422).json({ message: 'Nome obrigatório!' })
 		else if (!email) return res.status(422).json({ message: 'E-mail obrigatório!' })
@@ -118,7 +118,7 @@ export default class UserController {
 	}
 
 	static async deleteAccount(req: Request, res: Response): Promise<Response> {
-		const loggedUser = await JwtTokenHandler.getClientByToken(req, res)
+		const loggedUser = await JwtTokenHandler.getUserByToken(req, res)
 
 		try {
 			await UserSchema.findByIdAndDelete(loggedUser._id)
