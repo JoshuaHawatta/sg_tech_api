@@ -7,7 +7,7 @@ const appointmentRouter = Router()
 appointmentRouter.get(
 	'/clientappointments',
 	JwtTokenHandler.verifyToken,
-	AppointmentController.getClientAllAppointments
+	AppointmentController.getAllAppointments
 )
 
 export default appointmentRouter
