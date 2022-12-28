@@ -5,11 +5,17 @@ type TPayment = {
 	total: number
 }
 
+type TDelivered = {
+	devilered_date?: Date
+	finished: boolean
+}
+
 interface IAppointment {
 	service_type: string
-	readonly appointment_date: Date
-	readonly devilered_date?: Date
+	delivered: TDelivered
 	client?: IUserMainData
+	confirmedService: boolean
+	readonly appointment_date: Date
 	readonly payment?: TPayment
 	readonly createdAt: Date
 	readonly updatedAt: Date
