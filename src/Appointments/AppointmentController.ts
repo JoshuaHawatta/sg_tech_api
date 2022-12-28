@@ -24,7 +24,7 @@ export default class AppointmentController {
 
 		const appointment = new AppointmentSchema({
 			service_type: serviceType,
-			appointment_date: Date.parse(appointmentDate),
+			appointment_date: new Date(appointmentDate),
 			client: loggedUser,
 			delivered: { finished: false },
 		})
@@ -50,7 +50,7 @@ export default class AppointmentController {
 		}
 	}
 
-	static async confirmOrDeclineAppointment(req: Request, res: Response) {
+	static async confirmOrDeclineAppointment(req: Request, res: Response): Promise<Response> {
 		const { confirmedService } = req.body
 		const { id } = req.params
 		const loggedUser = await JwtTokenHandler.getUserByToken(req, res)
@@ -68,7 +68,11 @@ export default class AppointmentController {
 
 		try {
 			if (confirmOrDecline.confirmedService) {
-				await AppointmentSchema.findOneAndUpdate({ _id: id }, { $set: { confirmedService } })
+				await AppointmentSchema.findOneAndUpdate(
+					{ _id: id },
+					{ $set: confirmOrDecline },
+					{ new: true }
+				)
 				return res.status(200).json({ message: 'Agendamento confirmado com sucesso!' })
 			}
 
@@ -76,6 +80,48 @@ export default class AppointmentController {
 			return res.status(200).json({ message: 'Agendamento recusado com sucesso!' })
 		} catch (err) {
 			return res.status(500).json({ message: 'Não foi possível realizar esta ação no momento!' })
+		}
+	}
+
+	static async finishService(req: Request, res: Response): Promise<Response> {
+		const { id } = req.params
+		const { finished, deliveredDate } = req.body
+		const loggedUser = await JwtTokenHandler.getUserByToken(req, res)
+
+		if (!loggedUser.accesses.includes('Seller'))
+			return res.status(422).json({ message: 'Você não pode realizar essa ação!' })
+		else if (!Types.ObjectId.isValid(id)) return res.status(422).json({ message: 'ID inválido!' })
+		else if (!finished)
+			return res.status(422).json({ message: 'Informe se o serviço foi finalizado!' })
+		else if (!deliveredDate) return res.status(422).json({ message: 'Informe a data de entrega!' })
+
+		const existingService = await AppointmentSchema.findById(id)
+
+		if (!existingService?.confirmedService)
+			return res.status(422).json({ message: 'Você não pode finalizar serviços não confirmados!' })
+		else if (existingService.delivered.finished)
+			return res.status(422).json({ message: 'Serviço já finalizado!' })
+
+		const generateDeliveredDate = new Date(deliveredDate)
+
+		if (generateDeliveredDate < existingService.appointment_date)
+			return res
+				.status(422)
+				.json({ message: 'A data de entrega não pode ser antes da data do agendamento!' })
+
+		const finishedServiceData = {
+			delivered: { finished, deliveredDate: generateDeliveredDate },
+		}
+
+		try {
+			const clientService = await AppointmentSchema.findOneAndUpdate(
+				{ _id: id },
+				{ $set: finishedServiceData },
+				{ new: true }
+			)
+			return res.status(200).json({ message: 'Serviço finalizado com sucesso!', clientService })
+		} catch (err) {
+			return res.status(500).json({ message: 'Não foi possível finalizar o serviço!' })
 		}
 	}
 
