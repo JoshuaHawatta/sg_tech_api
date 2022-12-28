@@ -158,7 +158,7 @@ export default class AppointmentController {
 		const loggedUser = await JwtTokenHandler.getUserByToken(req, res)
 
 		try {
-			if (!loggedUser.accesses.includes('Seller')) {
+			if (loggedUser.accesses.includes('Seller')) {
 				const allAppointments = await AppointmentSchema.find().sort('-createdAt')
 				return res.status(200).json(allAppointments)
 			}
