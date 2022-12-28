@@ -23,9 +23,9 @@ appointmentRouter.patch(
 )
 
 appointmentRouter.get(
-	'/clientappointments',
+	'/allappointments/:id',
 	JwtTokenHandler.verifyToken,
-	AppointmentController.getUserAllAppointments
+	AppointmentController.getEspecificAppointment
 )
 
 appointmentRouter.get(
