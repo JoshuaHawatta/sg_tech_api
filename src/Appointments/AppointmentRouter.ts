@@ -28,4 +28,10 @@ appointmentRouter.get(
 	AppointmentController.getUserAllAppointments
 )
 
+appointmentRouter.get(
+	'/allappointments',
+	JwtTokenHandler.verifyToken,
+	AppointmentController.getAllAppointments
+)
+
 export default appointmentRouter
