@@ -10,6 +10,12 @@ appointmentRouter.post(
 	AppointmentController.addAppointment
 )
 
+appointmentRouter.patch(
+	'/confirmappointment/:id',
+	JwtTokenHandler.verifyToken,
+	AppointmentController.confirmOrDeclineAppointment
+)
+
 appointmentRouter.get(
 	'/clientappointments',
 	JwtTokenHandler.verifyToken,
