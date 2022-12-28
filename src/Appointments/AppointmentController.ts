@@ -7,6 +7,7 @@ import JwtTokenHandler from '../helpers/Jwt-token-handler'
 import availableDate from '../helpers/available-date'
 
 export default class AppointmentController {
+	//ADMIN_ROUTES
 	static async addAppointment(req: Request, res: Response): Promise<Response> {
 		const { serviceType, appointmentDate } = req.body
 		const loggedUser = await JwtTokenHandler.getUserByToken(req, res)
@@ -125,34 +126,48 @@ export default class AppointmentController {
 		}
 	}
 
-	static async getUserAllAppointments(req: Request, res: Response): Promise<Response> {
+	//ALL_USERS_ROUTES
+	static async getEspecificAppointment(req: Request, res: Response): Promise<Response> {
+		const { id } = req.params
 		const loggedUser = await JwtTokenHandler.getUserByToken(req, res)
 
-		if (loggedUser.accesses.includes('Seller'))
-			return res.status(401).json({ message: 'Acesso negado!' })
+		if (!Types.ObjectId.isValid(id)) return res.status(422).json({ message: 'ID inválido!' })
 
 		try {
-			const allAppointments = await AppointmentSchema.find({ 'client._id': loggedUser._id }).sort(
-				'-createdAt'
-			)
+			if (loggedUser.accesses.includes('Seller')) {
+				const appointment = await AppointmentSchema.findById(id)
 
-			return res.status(200).json(allAppointments)
+				return res.status(200).json(appointment)
+			}
+
+			const clientAppointment = await AppointmentSchema.findOne({
+				_id: id,
+				'client._id': loggedUser._id,
+			})
+
+			if (!clientAppointment)
+				return res.status(422).json({ message: 'Nenhum agendamento encontrado com este ID!' })
+
+			return res.status(200).json(clientAppointment)
 		} catch (err) {
-			return res
-				.status(500)
-				.json({ message: 'Não foi possível buscar seus angendamentos no momento!' })
+			return res.status(500).json({ message: 'Não foi possível resgatar este agendamento!' })
 		}
 	}
 
 	static async getAllAppointments(req: Request, res: Response): Promise<Response> {
 		const loggedUser = await JwtTokenHandler.getUserByToken(req, res)
 
-		if (!loggedUser.accesses.includes('Seller'))
-			return res.status(401).json({ message: 'Acesso negado!' })
-
 		try {
-			const allAppointments = await AppointmentSchema.find().sort('-createdAt')
-			return res.status(200).json(allAppointments)
+			if (!loggedUser.accesses.includes('Seller')) {
+				const allAppointments = await AppointmentSchema.find().sort('-createdAt')
+				return res.status(200).json(allAppointments)
+			}
+
+			const clientAllAppointments = await AppointmentSchema.find({
+				'client._id': loggedUser._id,
+			}).sort('-createdAt')
+
+			return res.status(200).json(clientAllAppointments)
 		} catch (err) {
 			return res.status(500).json({ message: 'Não foi possível resgatar os agendamentos!' })
 		}
