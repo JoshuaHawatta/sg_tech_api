@@ -1,5 +1,6 @@
 import { Request, Response } from 'express'
 import AppointmentSchema from './AppointmentSchema'
+import { Types } from 'mongoose'
 
 //HELPERS
 import JwtTokenHandler from '../helpers/Jwt-token-handler'
@@ -49,8 +50,40 @@ export default class AppointmentController {
 		}
 	}
 
+	static async confirmOrDeclineAppointment(req: Request, res: Response) {
+		const { confirmedService } = req.body
+		const { id } = req.params
+		const loggedUser = await JwtTokenHandler.getUserByToken(req, res)
+
+		if (!loggedUser.accesses.includes('Seller'))
+			return res.status(422).json({ message: 'Você não pode realizar essa ação!' })
+		else if (!Types.ObjectId.isValid(id)) return res.status(422).json({ message: 'ID inválido!' })
+
+		const appointment = await AppointmentSchema.findById(id)
+
+		if (appointment?.confirmedService)
+			return res.status(422).json({ message: 'Agendamento já confirmado!' })
+
+		const confirmOrDecline = { confirmedService }
+
+		try {
+			if (confirmOrDecline.confirmedService) {
+				await AppointmentSchema.findOneAndUpdate({ _id: id }, { $set: { confirmedService } })
+				return res.status(200).json({ message: 'Agendamento confirmado com sucesso!' })
+			}
+
+			await AppointmentSchema.findByIdAndDelete(id)
+			return res.status(200).json({ message: 'Agendamento recusado com sucesso!' })
+		} catch (err) {
+			return res.status(500).json({ message: 'Não foi possível realizar esta ação no momento!' })
+		}
+	}
+
 	static async getUserAllAppointments(req: Request, res: Response): Promise<Response> {
 		const loggedUser = await JwtTokenHandler.getUserByToken(req, res)
+
+		if (loggedUser.accesses.includes('Seller'))
+			return res.status(422).json({ message: 'Acesso negado!' })
 
 		try {
 			const allAppointments = await AppointmentSchema.find({ 'client._id': loggedUser._id }).sort(
