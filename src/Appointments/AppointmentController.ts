@@ -56,7 +56,7 @@ export default class AppointmentController {
 		const loggedUser = await JwtTokenHandler.getUserByToken(req, res)
 
 		if (!loggedUser.accesses.includes('Seller'))
-			return res.status(422).json({ message: 'Você não pode realizar essa ação!' })
+			return res.status(401).json({ message: 'Acesso negado!' })
 		else if (!Types.ObjectId.isValid(id)) return res.status(422).json({ message: 'ID inválido!' })
 
 		const appointment = await AppointmentSchema.findById(id)
@@ -89,7 +89,7 @@ export default class AppointmentController {
 		const loggedUser = await JwtTokenHandler.getUserByToken(req, res)
 
 		if (!loggedUser.accesses.includes('Seller'))
-			return res.status(422).json({ message: 'Você não pode realizar essa ação!' })
+			return res.status(401).json({ message: 'Acesso negado!' })
 		else if (!Types.ObjectId.isValid(id)) return res.status(422).json({ message: 'ID inválido!' })
 		else if (!finished)
 			return res.status(422).json({ message: 'Informe se o serviço foi finalizado!' })
@@ -129,7 +129,7 @@ export default class AppointmentController {
 		const loggedUser = await JwtTokenHandler.getUserByToken(req, res)
 
 		if (loggedUser.accesses.includes('Seller'))
-			return res.status(422).json({ message: 'Acesso negado!' })
+			return res.status(401).json({ message: 'Acesso negado!' })
 
 		try {
 			const allAppointments = await AppointmentSchema.find({ 'client._id': loggedUser._id }).sort(
@@ -141,6 +141,20 @@ export default class AppointmentController {
 			return res
 				.status(500)
 				.json({ message: 'Não foi possível buscar seus angendamentos no momento!' })
+		}
+	}
+
+	static async getAllAppointments(req: Request, res: Response): Promise<Response> {
+		const loggedUser = await JwtTokenHandler.getUserByToken(req, res)
+
+		if (!loggedUser.accesses.includes('Seller'))
+			return res.status(401).json({ message: 'Acesso negado!' })
+
+		try {
+			const allAppointments = await AppointmentSchema.find().sort('-createdAt')
+			return res.status(200).json(allAppointments)
+		} catch (err) {
+			return res.status(500).json({ message: 'Não foi possível resgatar os agendamentos!' })
 		}
 	}
 }
