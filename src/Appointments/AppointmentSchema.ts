@@ -8,8 +8,9 @@ const AppointmentSchema = model(
 	new Schema<IAppointment>({
 		service_type: { type: String, required: true },
 		appointment_date: { type: Date, required: true, immutable: true },
-		devilered_date: { type: Date, immutable: true },
+		delivered: Object,
 		client: Object,
+		confirmedService: { type: Boolean, default: false },
 		payment: Object,
 		createdAt: { type: Date, required: true, immutable: true, default: generateDate },
 		updatedAt: { type: Date, required: true, default: generateDate },
