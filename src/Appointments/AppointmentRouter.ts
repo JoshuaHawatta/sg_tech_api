@@ -16,6 +16,12 @@ appointmentRouter.patch(
 	AppointmentController.confirmOrDeclineAppointment
 )
 
+appointmentRouter.patch(
+	'/finishservice/:id',
+	JwtTokenHandler.verifyToken,
+	AppointmentController.finishService
+)
+
 appointmentRouter.get(
 	'/clientappointments',
 	JwtTokenHandler.verifyToken,
