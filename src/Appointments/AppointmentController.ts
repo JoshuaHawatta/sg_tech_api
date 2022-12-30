@@ -1,10 +1,13 @@
 import { Request, Response } from 'express'
 import AppointmentSchema from './AppointmentSchema'
 import { Types } from 'mongoose'
+import transporter from '../config/mailTransporter'
+import IAppointment from '../interfaces/IAppointment'
 
 //HELPERS
 import JwtTokenHandler from '../helpers/Jwt-token-handler'
 import availableDate from '../helpers/available-date'
+import MailingHandler from '../helpers/Mailing-handler'
 
 export default class AppointmentController {
 	//ADMIN_ROUTES
@@ -41,7 +44,7 @@ export default class AppointmentController {
 			const newAppointment = await appointment.save()
 
 			return res.status(201).json({
-				message: 'Agendamento em espera, será confirmado em até 48 horas!',
+				message: 'Feito! Vamos avaliar seu caso. Até 48 horas você receberá um e-mail nosso.',
 				newAppointment,
 			})
 		} catch (err) {
@@ -60,24 +63,39 @@ export default class AppointmentController {
 			return res.status(401).json({ message: 'Acesso negado!' })
 		else if (!Types.ObjectId.isValid(id)) return res.status(422).json({ message: 'ID inválido!' })
 
-		const appointment = await AppointmentSchema.findById(id)
+		const appointment = (await AppointmentSchema.findById(id)) as IAppointment
 
 		if (appointment?.confirmedService)
 			return res.status(422).json({ message: 'Agendamento já confirmado!' })
 
-		const confirmOrDecline = { confirmedService }
-
+		//IF_APPOINTMENT_IS_CONFIRMED,_UPDATE_AND_SEND_EMAIL,_ELSE:_DELETE_IT__AND_SEND_EMAIL.
 		try {
-			if (confirmOrDecline.confirmedService) {
-				await AppointmentSchema.findOneAndUpdate(
+			if (confirmedService) {
+				const newAppointment = (await AppointmentSchema.findOneAndUpdate(
 					{ _id: id },
-					{ $set: confirmOrDecline },
+					{ $set: { confirmedService } },
 					{ new: true }
+				)) as IAppointment
+
+				transporter.sendMail(
+					MailingHandler.appointmentEmail(appointment.client?.email as string, newAppointment),
+					err => {
+						if (err) console.log(err.message)
+					}
 				)
+
 				return res.status(200).json({ message: 'Agendamento confirmado com sucesso!' })
 			}
 
 			await AppointmentSchema.findByIdAndDelete(id)
+
+			transporter.sendMail(
+				MailingHandler.appointmentEmail(appointment.client?.email as string, appointment),
+				err => {
+					if (err) console.log(err.message)
+				}
+			)
+
 			return res.status(200).json({ message: 'Agendamento recusado com sucesso!' })
 		} catch (err) {
 			return res.status(500).json({ message: 'Não foi possível realizar esta ação no momento!' })
@@ -120,6 +138,14 @@ export default class AppointmentController {
 				{ $set: finishedServiceData },
 				{ new: true }
 			)
+
+			transporter.sendMail(
+				MailingHandler.finishedServiceEmail(clientService?.client?.email as string),
+				err => {
+					if (err) console.log(err.message)
+				}
+			)
+
 			return res.status(200).json({ message: 'Serviço finalizado com sucesso!', clientService })
 		} catch (err) {
 			return res.status(500).json({ message: 'Não foi possível finalizar o serviço!' })
