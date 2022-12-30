@@ -17,6 +17,6 @@ userRouter.patch(
 
 userRouter.delete('/deleteaccount', JwtTokenHandler.verifyToken, UserController.deleteAccount)
 
-userRouter.get('/checkclient', JwtTokenHandler.verifyToken, UserController.checkLoggedUser)
+userRouter.get('/checkuser', JwtTokenHandler.verifyToken, UserController.checkLoggedUser)
 
 export default userRouter
