@@ -6,19 +6,18 @@ const emailSender = process.env.NODE_MAILER_EMAIL as string
 
 export default class MailingHandler {
 	static appointmentEmail(to: string, appointmentContent: IAppointment): IEmailContent {
-		const appointmentDate =
-			moment(appointmentContent.appointment_date).format('MM/MM/YYYY, hh:mm') ??
-			'Data indisponível!'
+		const { appointment_date, confirmedService } = appointmentContent
 
-		const text = appointmentContent.confirmedService
+		const appointmentDate =
+			moment(appointment_date).format('MM/MM/YYYY, hh:mm') ?? 'Data indisponível!'
+
+		const text = confirmedService
 			? `Seu agendamento na data: ${appointmentDate} foi realizado com sucesso!`
 			: `Seu agendamento na data: ${appointmentDate} infelizmente precisou ser recusado!`
 
-		const subject = appointmentContent.confirmedService
-			? 'Agendamento confirmado!'
-			: 'Agendamento recusado :('
+		const subject = confirmedService ? 'Agendamento confirmado!' : 'Agendamento recusado :('
 
-		return { from: emailSender, to, subject, text } as IEmailContent
+		return { from: emailSender, to, subject, text }
 	}
 
 	static finishedServiceEmail(to: string): IEmailContent {
