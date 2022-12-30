@@ -7,7 +7,7 @@ const apiSecret = process.env.API_SECRET as string
 export default class JwtTokenHandler {
 	static generateToken(client: IuserMainData, res: Response): Response {
 		const newToken = jwt.sign(
-			{ name: client.name, _id: client._id, accesses: client.accesses },
+			{ name: client.name, _id: client._id, accesses: client.accesses, email: client.email },
 			apiSecret,
 
 			{ expiresIn: '4 hours' }
