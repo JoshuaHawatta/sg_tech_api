@@ -1,37 +1,32 @@
 import { Router } from 'express'
-import AppointmentController from './AppointmentController'
+import GeneralController from './controllers/GeneralController'
+import AdminController from './controllers/AdminController'
 import JwtTokenHandler from '../helpers/Jwt-token-handler'
 
 const appointmentRouter = Router()
 
-appointmentRouter.post(
-	'/addappointment',
-	JwtTokenHandler.verifyToken,
-	AppointmentController.addAppointment
-)
+//ADMIN_ROUTES
+appointmentRouter.post('/addappointment', JwtTokenHandler.verifyToken, GeneralController.addAppointment)
 
 appointmentRouter.patch(
 	'/confirmappointment/:id',
 	JwtTokenHandler.verifyToken,
-	AppointmentController.confirmOrDeclineAppointment
+	AdminController.confirmOrDeclineAppointment
 )
 
-appointmentRouter.patch(
-	'/finishservice/:id',
-	JwtTokenHandler.verifyToken,
-	AppointmentController.finishService
-)
+appointmentRouter.patch('/finishservice/:id', JwtTokenHandler.verifyToken, AdminController.finishService)
 
+//GENERAL_ROUTES
 appointmentRouter.get(
 	'/allappointments/:id',
 	JwtTokenHandler.verifyToken,
-	AppointmentController.getEspecificAppointment
+	GeneralController.getEspecificAppointment
 )
 
 appointmentRouter.get(
 	'/allappointments',
 	JwtTokenHandler.verifyToken,
-	AppointmentController.getAllAppointments
+	GeneralController.getAllAppointments
 )
 
 export default appointmentRouter
