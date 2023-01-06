@@ -8,18 +8,7 @@ import JwtTokenHandler from '../helpers/Jwt-token-handler'
 
 export default class UserController {
 	static async registerAccount(req: Request, res: Response): Promise<Response> {
-		const { name, email, phone, password, confirmPassword } = req.body
-
-		if (!name) return res.status(422).json({ message: 'Nome obrigatório!' })
-		else if (!email) return res.status(422).json({ message: 'E-mail obrigatório!' })
-		else if (!phone) return res.status(422).json({ message: 'Telefone obrigatório!' })
-		else if (!password) return res.status(422).json({ message: 'Senha obrigatória!' })
-		else if (!confirmPassword) return res.status(422).json({ message: 'Confirme sua senha!' })
-		else if (confirmPassword !== password)
-			return res.status(422).json({ message: 'As senhas não estão iguais!' })
-		else if (password === name)
-			return res.status(422).json({ message: 'A senha não pode ser igual ao nome!' })
-
+		const { name, email, phone, password } = req.body
 		const existUser = await UserSchema.findOne({ email: email }).select('-password')
 
 		if (existUser) return res.status(422).json({ message: 'Este e-mail já está em uso!' })
@@ -47,9 +36,6 @@ export default class UserController {
 	static async login(req: Request, res: Response): Promise<Response> {
 		const { email, password } = req.body
 
-		if (!email) return res.status(422).json({ message: 'E-mail obrigatório!' })
-		else if (!password) return res.status(422).json({ message: 'Senha obrigatória!' })
-
 		const user = await UserSchema.findOne({ email })
 
 		if (!user)
@@ -75,33 +61,21 @@ export default class UserController {
 	}
 
 	static async updateAccountData(req: Request, res: Response): Promise<Response> {
-		const { name, email, phone, password, confirmPassword } = req.body
+		const { name, email, phone, password } = req.body
 		const image = req.file?.filename
 
 		const loggedUser = await JwtTokenHandler.getUserByToken(req, res)
 
-		if (!name) return res.status(422).json({ message: 'Nome obrigatório!' })
-		else if (!email) return res.status(422).json({ message: 'E-mail obrigatório!' })
-		else if (!phone) return res.status(422).json({ message: 'Telefone obrigatório!' })
-		else if (!password) return res.status(422).json({ message: 'Senha obrigatória!' })
-		else if (!confirmPassword) return res.status(422).json({ message: 'Confirme sua senha!' })
-		else if (confirmPassword !== password)
-			return res.status(422).json({ message: 'As senhas não estão iguais!' })
+		const salt = await bcrypt.genSalt(16)
+		const hashedPassword = await bcrypt.hash(password, salt)
 
 		const userNewData = {
 			name,
 			email,
 			phone,
 			image,
-			password,
+			password: hashedPassword,
 			updatedAt: generateDate(),
-		}
-
-		if (password === confirmPassword && password !== null) {
-			const salt = await bcrypt.genSalt(16)
-			const newHashedPassword = await bcrypt.hash(password, salt)
-
-			userNewData.password = newHashedPassword
 		}
 
 		try {
