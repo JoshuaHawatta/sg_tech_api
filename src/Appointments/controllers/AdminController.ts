@@ -64,10 +64,6 @@ export default class AdminController {
 
 		if (!loggedUser.accesses.includes('Seller'))
 			return res.status(401).json({ message: 'Acesso negado!' })
-		else if (!Types.ObjectId.isValid(id)) return res.status(422).json({ message: 'ID inválido!' })
-		else if (!finished)
-			return res.status(422).json({ message: 'Informe se o serviço foi finalizado!' })
-		else if (!deliveredDate) return res.status(422).json({ message: 'Informe a data de entrega!' })
 
 		const existingService = await AppointmentSchema.findById(id)
 

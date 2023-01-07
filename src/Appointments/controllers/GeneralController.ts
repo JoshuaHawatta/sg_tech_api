@@ -13,9 +13,6 @@ export default class AppointmentController {
 
 		if (loggedUser.accesses.includes('Seller'))
 			return res.status(401).json({ message: 'Você não pode realizar um agendamento!' })
-		else if (!serviceType) return res.status(422).json({ message: 'Informe o tipo de serviço!' })
-		else if (!appointmentDate)
-			return res.status(422).json({ message: 'Data de agendamento obrigatória!' })
 
 		const confirmedAppointments = await AppointmentSchema.find({
 			confirmedService: true,
