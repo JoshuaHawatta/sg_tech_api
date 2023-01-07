@@ -1,5 +1,4 @@
-import { NextFunction, Request, Response } from 'express'
-import { body, validationResult } from 'express-validator'
+import { body } from 'express-validator'
 
 const createOrUpdate = [
 	body('name').trim().not().isEmpty().withMessage('Nome obrigatório!'),
@@ -29,12 +28,4 @@ const createOrUpdate = [
 		}),
 ]
 
-const createOrUpdateResults = (req: Request, res: Response, next: NextFunction): Response | void => {
-	const results = validationResult(req).array()
-
-	if (results.length > 0) return res.status(422).json({ message: results[0].msg })
-
-	return next()
-}
-
-export { createOrUpdateResults, createOrUpdate }
+export default createOrUpdate
