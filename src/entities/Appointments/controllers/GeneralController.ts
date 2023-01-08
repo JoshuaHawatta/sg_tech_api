@@ -3,8 +3,8 @@ import AppointmentSchema from '../AppointmentSchema'
 import { Types } from 'mongoose'
 
 //HELPERS
-import JwtTokenHandler from '../../helpers/Jwt-token-handler'
-import availableDate from '../../helpers/available-date'
+import JwtTokenHandler from '../../../helpers/Jwt-token-handler'
+import availableDate from '../../../helpers/available-date'
 
 export default class AppointmentController {
 	static async addAppointment(req: Request, res: Response): Promise<Response> {

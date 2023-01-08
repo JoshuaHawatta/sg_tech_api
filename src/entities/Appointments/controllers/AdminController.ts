@@ -1,12 +1,12 @@
 import { Request, Response } from 'express'
 import AppointmentSchema from '../AppointmentSchema'
 import { Types } from 'mongoose'
-import transporter from '../../config/mailTransporter'
-import IAppointment from '../../interfaces/IAppointment'
+import transporter from '../../../config/mailTransporter'
+import IAppointment from '../../../interfaces/IAppointment'
 
 //HELPERS
-import JwtTokenHandler from '../../helpers/Jwt-token-handler'
-import MailingHandler from '../../helpers/Mailing-handler'
+import JwtTokenHandler from '../../../helpers/Jwt-token-handler'
+import MailingHandler from '../../../helpers/Mailing-handler'
 
 export default class AdminController {
 	static async confirmOrDeclineAppointment(req: Request, res: Response): Promise<Response> {

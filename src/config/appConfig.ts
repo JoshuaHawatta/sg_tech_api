@@ -3,8 +3,8 @@ import cors from 'cors'
 import mongoDBConnect from '../database/database'
 
 //ROUTERS
-import userRouter from '../User/UserRouter'
-import appointmentRouter from '../Appointments/AppointmentRouter'
+import userRouter from '../entities/User/UserRouter'
+import appointmentRouter from '../entities/Appointments/AppointmentRouter'
 
 const appConfig = (app: Express): void => {
 	//SOLVE_CORS

@@ -1,6 +1,6 @@
 import { Schema, model } from 'mongoose'
-import IClient from '../interfaces/IUser'
-import generateDate from '../helpers/generate-date'
+import IClient from '../../interfaces/IUser'
+import generateDate from '../../helpers/generate-date'
 
 const UserSchema = model(
 	'Users',

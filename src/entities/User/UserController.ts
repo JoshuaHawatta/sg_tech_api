@@ -3,8 +3,8 @@ import UserSchema from './UserSchema'
 import bcrypt from 'bcrypt'
 
 //HELPERS
-import generateDate from '../helpers/generate-date'
-import JwtTokenHandler from '../helpers/Jwt-token-handler'
+import generateDate from '../../helpers/generate-date'
+import JwtTokenHandler from '../../helpers/Jwt-token-handler'
 
 export default class UserController {
 	static async registerAccount(req: Request, res: Response): Promise<Response> {

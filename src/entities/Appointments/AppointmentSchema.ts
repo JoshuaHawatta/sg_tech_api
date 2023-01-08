@@ -1,6 +1,6 @@
 import { model, Schema } from 'mongoose'
-import generateDate from '../helpers/generate-date'
-import IAppointment from '../interfaces/IAppointment'
+import generateDate from '../../helpers/generate-date'
+import IAppointment from '../../interfaces/IAppointment'
 
 const AppointmentSchema = model(
 	'Appointments',
