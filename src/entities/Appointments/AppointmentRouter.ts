@@ -12,16 +12,14 @@ import getValidationsResults from '../../middlewares/getValidationsResults'
 
 const appointmentRouter = Router()
 
+//RESOLVE_TOKEN_INTERCEPTION
+appointmentRouter.use(verifyToken)
+
 //ADMIN_ROUTES
-appointmentRouter.patch(
-	'/confirmappointment/:id',
-	verifyToken,
-	AdminController.confirmOrDeclineAppointment
-)
+appointmentRouter.patch('/confirmappointment/:id', AdminController.confirmOrDeclineAppointment)
 
 appointmentRouter.patch(
 	'/finishservice/:id',
-	verifyToken,
 	finishService,
 	getValidationsResults,
 	AdminController.finishService
@@ -30,15 +28,13 @@ appointmentRouter.patch(
 //USER_ROUTES
 appointmentRouter.post(
 	'/addappointment',
-	verifyToken,
 	addAppointment,
 	getValidationsResults,
 	GeneralController.addAppointment
 )
 
 //GENERAL_ROUTES
-appointmentRouter.get('/allappointments/:id', verifyToken, GeneralController.getEspecificAppointment)
-
-appointmentRouter.get('/allappointments', verifyToken, GeneralController.getAllAppointments)
+appointmentRouter.get('/allappointments/:id', GeneralController.getEspecificAppointment)
+appointmentRouter.get('/allappointments', GeneralController.getAllAppointments)
 
 export default appointmentRouter
