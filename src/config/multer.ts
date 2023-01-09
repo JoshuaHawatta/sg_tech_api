@@ -1,9 +1,8 @@
 import multer from 'multer'
 import path from 'path'
-import { Request } from 'express'
 
 const multerConfig = multer.diskStorage({
-	destination: (req: Request, file, callback) => callback(null, path.resolve(__dirname, '../uploads')),
+	destination: (_, __, callback) => callback(null, path.resolve(__dirname, '../uploads')),
 
 	filename: (_, file, callback) =>
 		callback(
