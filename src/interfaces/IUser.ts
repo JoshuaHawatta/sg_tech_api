@@ -1,6 +1,6 @@
 import IAppointment from './IAppointment'
 
-interface IClient {
+interface IUser {
 	name: string
 	email: string
 	phone: number
@@ -12,4 +12,4 @@ interface IClient {
 	readonly updatedAt: Date
 }
 
-export default IClient
+export default IUser
