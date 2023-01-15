@@ -3,8 +3,11 @@ import UserSchema from './UserSchema'
 import bcrypt from 'bcrypt'
 
 //HELPERS
-import generateDate from '../../helpers/generate-date'
 import JwtTokenHandler from '../../helpers/Jwt-token-handler'
+
+//DTOs
+import RegisterDTO from '../../DTOs/User/RegisterDTO'
+import UpdateDTO from '../../DTOs/User/UpdateDTO'
 
 export default class UserController {
 	static async registerAccount(req: Request, res: Response): Promise<Response> {
@@ -15,15 +18,9 @@ export default class UserController {
 
 		const salt = await bcrypt.genSalt(16)
 		const encryptedPassword = await bcrypt.hash(password, salt)
+		const newUser = new RegisterDTO(name, email, phone, encryptedPassword)
 
-		const user = new UserSchema({
-			name,
-			email,
-			phone,
-			password: encryptedPassword,
-			createdAt: generateDate(),
-			updatedAt: generateDate(),
-		})
+		const user = new UserSchema(newUser.getData())
 
 		try {
 			const signUser = await user.save()
@@ -69,19 +66,12 @@ export default class UserController {
 		const salt = await bcrypt.genSalt(16)
 		const hashedPassword = await bcrypt.hash(password, salt)
 
-		const userNewData = {
-			name,
-			email,
-			phone,
-			image,
-			password: hashedPassword,
-			updatedAt: generateDate(),
-		}
+		const updateData = new UpdateDTO(name, email, phone, hashedPassword, image)
 
 		try {
 			await UserSchema.findOneAndUpdate(
 				{ _id: loggedUser._id },
-				{ $set: userNewData },
+				{ $set: updateData.getData() },
 				{ new: true }
 			)
 
