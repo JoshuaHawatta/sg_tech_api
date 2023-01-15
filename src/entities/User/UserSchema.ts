@@ -1,11 +1,11 @@
 import { Schema, model } from 'mongoose'
-import IClient from '../../interfaces/IUser'
+import IUser from '../../interfaces/IUser'
 import generateDate from '../../helpers/generate-date'
 
 const UserSchema = model(
 	'Users',
 
-	new Schema<IClient>({
+	new Schema<IUser>({
 		name: { type: String, required: true },
 		email: { type: String, required: true },
 		phone: { type: Number, required: true },
