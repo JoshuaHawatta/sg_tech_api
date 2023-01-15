@@ -6,6 +6,12 @@ import { Types } from 'mongoose'
 import JwtTokenHandler from '../../../helpers/Jwt-token-handler'
 import availableDate from '../../../helpers/available-date'
 
+//DTOs
+import AddAppointmentDTO from '../../../DTOs/Appointments/AddAppointmentDTO'
+import FindConfirmedAppointmentsDTO from '../../../DTOs/Appointments/FindConfirmedAppointmentsDTO'
+import GetEspecificAppointmentDTO from '../../../DTOs/Appointments/GetEspecificAppointmentDTO'
+import GetAllAppointmentDTO from '../../../DTOs/Appointments/GetAllAppointmentsDTO'
+
 export default class AppointmentController {
 	static async addAppointment(req: Request, res: Response): Promise<Response> {
 		const { serviceType, appointmentDate } = req.body
@@ -14,26 +20,20 @@ export default class AppointmentController {
 		if (loggedUser.accesses.includes('Seller'))
 			return res.status(401).json({ message: 'Você não pode realizar um agendamento!' })
 
-		const confirmedAppointments = await AppointmentSchema.find({
-			confirmedService: true,
-			'delivered.finished': false,
-		})
+		const appointmentsFilters = new FindConfirmedAppointmentsDTO()
+		const confirmedAppointments = await AppointmentSchema.find(appointmentsFilters.getData())
 
-		const appointment = new AppointmentSchema({
-			service_type: serviceType,
-			appointment_date: new Date(appointmentDate),
-			client: loggedUser,
-			delivered: { finished: false },
-		})
+		const appointmentData = new AddAppointmentDTO(serviceType, appointmentDate, loggedUser)
 
-		const unavailableDates = confirmedAppointments.map(({ appointment_date }) =>
-			availableDate(appointment_date, appointment.appointment_date)
+		const unavailableDates = confirmedAppointments.map(({ appointmentDate }) =>
+			availableDate(appointmentDate, appointmentData.getAppointment_date())
 		)
 
 		if (unavailableDates.some(appointment => appointment))
 			return res.status(422).json({ message: 'Este horário já está reservado!' })
 
 		try {
+			const appointment = new AppointmentSchema(appointmentData)
 			const newAppointment = await appointment.save()
 
 			return res.status(201).json({
@@ -60,10 +60,8 @@ export default class AppointmentController {
 				return res.status(200).json(appointment)
 			}
 
-			const clientAppointment = await AppointmentSchema.findOne({
-				_id: id,
-				'client._id': loggedUser._id,
-			})
+			const filterData = new GetEspecificAppointmentDTO(id, loggedUser._id)
+			const clientAppointment = await AppointmentSchema.findOne(filterData.getData())
 
 			if (!clientAppointment)
 				return res.status(422).json({ message: 'Nenhum agendamento encontrado com este ID!' })
@@ -83,9 +81,10 @@ export default class AppointmentController {
 				return res.status(200).json(allAppointments)
 			}
 
-			const clientAllAppointments = await AppointmentSchema.find({
-				'client._id': loggedUser._id,
-			}).sort('-createdAt')
+			const filterData = new GetAllAppointmentDTO(loggedUser._id)
+			const clientAllAppointments = await AppointmentSchema.find(filterData.getData()).sort(
+				'-createdAt'
+			)
 
 			return res.status(200).json(clientAllAppointments)
 		} catch (err) {
