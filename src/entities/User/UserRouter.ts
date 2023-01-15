@@ -1,6 +1,9 @@
 import Router from 'express'
-import UserController from './UserController'
 import imageUpload from '../../config/multer'
+
+//CONTROLLERS
+import GeneralController from './controllers/GeneralController'
+import AdminController from './controllers/AdminController'
 
 //MIDDLEWARES
 import verifyToken from '../../middlewares/verifyToken'
@@ -10,20 +13,26 @@ import createOrUpdate from '../../middlewares/validations/user/createOrUpdate'
 
 const userRouter = Router()
 
-userRouter.post('/register', createOrUpdate, getValidationsResults, UserController.registerAccount)
-userRouter.post('/login', login, getValidationsResults, UserController.login)
+//GENERAL_UNPROTECTED_ROUTES
+userRouter.post('/register', createOrUpdate, getValidationsResults, GeneralController.registerAccount)
+userRouter.post('/login', login, getValidationsResults, GeneralController.login)
+
+//PROTECTED_GENERAL_ROUTES
+userRouter.use(verifyToken)
 
 userRouter.patch(
 	'/updatedata',
-	verifyToken,
 	imageUpload.single('image'),
 	createOrUpdate,
 	getValidationsResults,
-	UserController.updateAccountData
+	GeneralController.updateAccountData
 )
 
-userRouter.delete('/deleteaccount', verifyToken, UserController.deleteAccount)
+userRouter.delete('/deleteaccount', GeneralController.deleteAccount)
+userRouter.get('/checkuser', GeneralController.checkLoggedUser)
 
-userRouter.get('/checkuser', verifyToken, UserController.checkLoggedUser)
+//ADMIN_ROUTES
+userRouter.get('/showusers/:id', AdminController.getOneUser)
+userRouter.get('/showusers', AdminController.getAllUsers)
 
 export default userRouter
