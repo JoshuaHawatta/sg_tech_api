@@ -80,7 +80,7 @@ export default class AdminController {
 
 		const finishedServiceData = new FinishServiceDTO(finished, deliveredDate)
 
-		if (finishedServiceData.getDeliveredDate() < existingService.appointment_date)
+		if (finishedServiceData.getDeliveredDate() < existingService.appointmentDate)
 			return res
 				.status(422)
 				.json({ message: 'A data de entrega não pode ser antes da data do agendamento!' })
