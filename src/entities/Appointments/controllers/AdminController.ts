@@ -8,6 +8,10 @@ import IAppointment from '../../../interfaces/IAppointment'
 import JwtTokenHandler from '../../../helpers/Jwt-token-handler'
 import MailingHandler from '../../../helpers/Mailing-handler'
 
+//DTOs
+import ConfirmOrDeclineDTO from '../../../DTOs/Appointments/ConfirmOrDeclineDTO'
+import FinishServiceDTO from '../../../DTOs/Appointments/FinishServiceDTO'
+
 export default class AdminController {
 	static async confirmOrDeclineAppointment(req: Request, res: Response): Promise<Response> {
 		const { confirmedService } = req.body
@@ -23,12 +27,14 @@ export default class AdminController {
 		if (appointment?.confirmedService)
 			return res.status(422).json({ message: 'Agendamento já confirmado!' })
 
-		//IF_APPOINTMENT_IS_CONFIRMED,_UPDATE_AND_SEND_EMAIL,_ELSE:_DELETE_IT__AND_SEND_EMAIL.
+		const confirmedOrDeclinedData = new ConfirmOrDeclineDTO(confirmedService)
+
+		//APPOINTMENT_IS_CONFIRMED,_UPDATE_AND_SEND_EMAIL._ELSE,_DELETE_IT_AND_SEND_EMAIL.
 		try {
-			if (confirmedService) {
+			if (confirmedOrDeclinedData.getConfirmedService()) {
 				const newAppointment = (await AppointmentSchema.findOneAndUpdate(
 					{ _id: id },
-					{ $set: { confirmedService } },
+					{ $set: confirmedOrDeclinedData.getData() },
 					{ new: true }
 				)) as IAppointment
 
@@ -72,21 +78,17 @@ export default class AdminController {
 		else if (existingService.delivered.finished)
 			return res.status(422).json({ message: 'Serviço já finalizado!' })
 
-		const generateDeliveredDate = new Date(deliveredDate)
+		const finishedServiceData = new FinishServiceDTO(finished, deliveredDate)
 
-		if (generateDeliveredDate < existingService.appointment_date)
+		if (finishedServiceData.getDeliveredDate() < existingService.appointment_date)
 			return res
 				.status(422)
 				.json({ message: 'A data de entrega não pode ser antes da data do agendamento!' })
 
-		const finishedServiceData = {
-			delivered: { finished, deliveredDate: generateDeliveredDate },
-		}
-
 		try {
 			const clientService = await AppointmentSchema.findOneAndUpdate(
 				{ _id: id },
-				{ $set: finishedServiceData },
+				{ $set: finishedServiceData.getData() },
 				{ new: true }
 			)
 
