@@ -1,19 +1,12 @@
 import { Types } from 'mongoose'
-
-type TGetAllAppointmentData = {
-	'client._id': Types.ObjectId
-}
+import { TGetAllAppointmentData } from '../../types/appointment'
 
 export default class GetAllAppointmentDTO {
-	clientId: Types.ObjectId
-
-	constructor(clientId: Types.ObjectId) {
+	constructor(protected clientId: Types.ObjectId) {
 		this.clientId = clientId
 	}
 
 	public getData(): TGetAllAppointmentData {
-		return {
-			'client._id': this.clientId,
-		}
+		return { 'client._id': this.clientId }
 	}
 }

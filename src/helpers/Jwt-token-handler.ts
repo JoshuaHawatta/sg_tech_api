@@ -1,11 +1,11 @@
 import { Request, Response, NextFunction } from 'express'
 import jwt from 'jsonwebtoken'
-import IuserMainData from '../interfaces/IUserMainData'
+import { TUserMainData } from '../types/user'
 
 const apiSecret = process.env.API_SECRET as string
 
 export default class JwtTokenHandler {
-	static generateToken(client: IuserMainData, res: Response): Response {
+	static generateToken(client: TUserMainData, res: Response): Response {
 		const newToken = jwt.sign(
 			{ name: client.name, _id: client._id, accesses: client.accesses, email: client.email },
 			apiSecret,
@@ -22,12 +22,12 @@ export default class JwtTokenHandler {
 		return authHeader?.split(' ')[1] ?? 'INVALID_CLIENT_TOKEN'
 	}
 
-	static async getUserByToken(req: Request, res: Response): Promise<IuserMainData> {
+	static async getUserByToken(req: Request, res: Response): Promise<TUserMainData> {
 		const token = await JwtTokenHandler.getToken(req)
 
 		if (!token) res.status(401).json({ message: 'Acesso negado!' })
 
-		return jwt.verify(token, apiSecret) as Promise<IuserMainData>
+		return jwt.verify(token, apiSecret) as Promise<TUserMainData>
 	}
 
 	static async verifyToken(req: Request, res: Response, next: NextFunction): Promise<Response | void> {

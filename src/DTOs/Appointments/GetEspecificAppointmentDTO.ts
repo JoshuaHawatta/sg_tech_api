@@ -1,16 +1,9 @@
 import { Types } from 'mongoose'
-
 import GetAllAppointmentDTO from './GetAllAppointmentsDTO'
-
-type TGetEspecificAppointmentData = {
-	_id: Types.ObjectId | string
-	'client._id': Types.ObjectId
-}
+import { TGetEspecificAppointmentData } from '../../types/appointment'
 
 export default class GetEspecificAppointmentDTO extends GetAllAppointmentDTO {
-	_id: Types.ObjectId | string
-
-	constructor(_id: Types.ObjectId | string, clientId: Types.ObjectId) {
+	constructor(private _id: Types.ObjectId | string, protected clientId: Types.ObjectId) {
 		super(clientId)
 
 		this._id = _id
@@ -18,9 +11,6 @@ export default class GetEspecificAppointmentDTO extends GetAllAppointmentDTO {
 	}
 
 	public override getData(): TGetEspecificAppointmentData {
-		return {
-			_id: this._id,
-			'client._id': this.clientId,
-		}
+		return { _id: this._id, 'client._id': this.clientId }
 	}
 }

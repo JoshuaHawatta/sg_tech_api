@@ -1,7 +1,4 @@
-type TFindConfirmedAppointmentsData = {
-	confirmedService: boolean
-	'delivered.finished': boolean
-}
+import { TFindConfirmedAppointmentsData } from '../../types/appointment'
 
 export default class FindConfirmedAppointmentsDTO {
 	private confirmedService: boolean

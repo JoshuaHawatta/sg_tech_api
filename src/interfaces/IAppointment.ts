@@ -1,14 +1,10 @@
-import IUserMainData from './IUserMainData'
-
-type TDelivered = {
-	devileredDate?: Date
-	finished: boolean
-}
+import { TUserMainData } from '../types/user'
+import { TDelivered } from '../types/appointment'
 
 interface IAppointment {
 	serviceType: string
 	delivered: TDelivered
-	client?: IUserMainData
+	client?: TUserMainData
 	confirmedService: boolean
 	readonly appointmentDate: Date
 	readonly createdAt: Date

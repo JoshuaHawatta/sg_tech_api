@@ -1,11 +1,11 @@
 import IAppointment from '../interfaces/IAppointment'
 import moment from 'moment'
-import IEmailContent from '../interfaces/IEmailContent'
+import { TEmailContent } from '../types/email'
 
 const emailSender = process.env.NODE_MAILER_EMAIL as string
 
 export default class MailingHandler {
-	static appointmentEmail(to: string, appointmentContent: IAppointment): IEmailContent {
+	static appointmentEmail(to: string, appointmentContent: IAppointment): TEmailContent {
 		const { appointmentDate, confirmedService } = appointmentContent
 		const choosedDate = moment(appointmentDate).format('MM/MM/YYYY, hh:mm') ?? 'Data indisponível!'
 
@@ -18,7 +18,7 @@ export default class MailingHandler {
 		return { from: emailSender, to, subject, text }
 	}
 
-	static finishedServiceEmail(to: string): IEmailContent {
+	static finishedServiceEmail(to: string): TEmailContent {
 		return {
 			from: emailSender,
 			to,

@@ -1,13 +1,5 @@
 import generateDate from '../../helpers/generate-date'
-
-type TRegisterData = {
-	name: string
-	email: string
-	phone: number
-	password: string
-	createdAt: Date
-	updatedAt: Date
-}
+import { TUserDTOReturnData } from '../../types/user'
 
 export default class RegisterDTO {
 	private name: string
@@ -26,7 +18,7 @@ export default class RegisterDTO {
 		this.updatedAt = new Date(generateDate())
 	}
 
-	public getData(): TRegisterData {
+	public getData(): TUserDTOReturnData {
 		return {
 			name: this.name,
 			email: this.email,

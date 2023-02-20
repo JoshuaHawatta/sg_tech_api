@@ -1,11 +1,7 @@
-type TConfirmedOrDeclieData = {
-	confirmedService: boolean
-}
+import { TConfirmedOrDeclineDTOReturnData } from '../../types/appointment'
 
 export default class ConfirmOrDeclineDTO {
-	private confirmedService: boolean
-
-	constructor(confirmedService: boolean) {
+	constructor(private confirmedService: boolean) {
 		this.confirmedService = confirmedService
 	}
 
@@ -13,9 +9,7 @@ export default class ConfirmOrDeclineDTO {
 		return this.confirmedService
 	}
 
-	getData(): TConfirmedOrDeclieData {
-		return {
-			confirmedService: this.confirmedService,
-		}
+	getData(): TConfirmedOrDeclineDTOReturnData {
+		return { confirmedService: this.confirmedService }
 	}
 }

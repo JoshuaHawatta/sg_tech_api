@@ -1,15 +1,7 @@
-type TFinishServiceData = {
-	delivered: {
-		finished: boolean
-		deliveredDate: Date
-	}
-}
+import { TFinishServiceDTOReturnData } from '../../types/appointment'
 
 export default class FinishServiceDTO {
-	private finished: boolean
-	private deliveredDate: Date
-
-	constructor(finished: boolean, deliveredDate: Date) {
+	constructor(private finished: boolean, private deliveredDate: Date) {
 		this.finished = finished
 		this.deliveredDate = new Date(deliveredDate)
 	}
@@ -18,12 +10,9 @@ export default class FinishServiceDTO {
 		return this.deliveredDate
 	}
 
-	getData(): TFinishServiceData {
+	getData(): TFinishServiceDTOReturnData {
 		return {
-			delivered: {
-				finished: this.finished,
-				deliveredDate: this.deliveredDate,
-			},
+			delivered: { finished: this.finished, deliveredDate: this.deliveredDate },
 		}
 	}
 }

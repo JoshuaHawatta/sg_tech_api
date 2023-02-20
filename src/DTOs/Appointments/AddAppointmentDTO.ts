@@ -1,19 +1,13 @@
-import IUserMainData from '../../interfaces/IUserMainData'
-
-type TAddAppointmentData = {
-	serviceType: string
-	appointmentDate: Date
-	client: IUserMainData
-	delivered: { finished: boolean }
-}
+import { TUserMainData } from '../../types/user'
+import { TAddAppointmentDTO, TDelivered } from '../../types/appointment'
 
 export default class AddAppointmentDTO {
 	private serviceType: string
 	private appointmentDate: Date
-	private client: IUserMainData
-	private delivered: { finished: boolean }
+	private client: TUserMainData
+	private delivered: TDelivered
 
-	constructor(serviceType: string, appointmentDate: Date, client: IUserMainData) {
+	constructor(serviceType: string, appointmentDate: Date, client: TUserMainData) {
 		this.serviceType = serviceType
 		this.appointmentDate = new Date(appointmentDate)
 		this.client = client
@@ -24,7 +18,7 @@ export default class AddAppointmentDTO {
 		return this.appointmentDate
 	}
 
-	public getData(): TAddAppointmentData {
+	public getData(): TAddAppointmentDTO {
 		return {
 			serviceType: this.serviceType,
 			appointmentDate: this.appointmentDate,
