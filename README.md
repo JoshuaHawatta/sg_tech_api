@@ -24,7 +24,7 @@ Author: [Joshua Hawatta](http://joshuahawatta.com)
 </a>
 
 <a href='https://github.com/shivamkapasia0' target="_blank">
-  <img alt='mongodb' src='https://img.shields.io/badge/Mongoose-100000?style=for-the-badge&logo=mongodb&logoColor=white&labelColor=4DB33D&color=4DB33D'/>
+  <img alt='mongodb' src='https://img.shields.io/badge/MongoDB/Mongoose-100000?style=for-the-badge&logo=mongodb&logoColor=white&labelColor=4DB33D&color=4DB33D'/>
 </a>
 
 ## LIBS
@@ -56,6 +56,15 @@ Author: [Joshua Hawatta](http://joshuahawatta.com)
 <a href='https://github.com/shivamkapasia0' target="_blank">
   <img alt='Express' src='https://img.shields.io/badge/Express_validator-100000?style=for-the-badge&logo=Express&logoColor=white&labelColor=282424&color=282424'/>
 </a>
+
+## WHAT I´VE LEARNED
+
+```
+- How to use *.d.ts files for custom types.
+- create DTOs in a efficiently way.
+- Single Responsibility principle from SOLID.
+- building from scratch a whole MongoDB and TypeScript API using a hybrid of MVC and Pack By Feature architecture. 
+```
 
 ## AT ROOT DIRECTORY
 
