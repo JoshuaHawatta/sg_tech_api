@@ -62,8 +62,8 @@ Author: [Joshua Hawatta](http://joshuahawatta.com)
 ```
 - How to use *.d.ts files for custom types.
 - create DTOs in a efficiently way.
-- Single Responsibility principle from SOLID.
-- building from scratch a whole MongoDB and TypeScript API using a hybrid of MVC and Pack By Feature architecture. 
+- Single Responsibility Principle and Dependency Inversion Principle from SOLID.
+- building from scratch a whole MongoDB and TypeScript API using a hybrid of MVC and Pack By Feature architecture.
 ```
 
 ## AT ROOT DIRECTORY
@@ -85,10 +85,10 @@ the main directory for all the application files and sub-directories.
 ```
 .env.example: enviroment vars stay here. create a ".env" file and replace all examples with your own data.
 .eslintrc.json: project linting configuration.
-.gitignore: all files and directories the git must ignore
+.gitignore: all files and directories the git must ignore.
 package*.json: my package managers.
-README.md: documentation
-tsconfig.json: typescript configuration file
+README.md: documentation.
+tsconfig.json: typescript configuration file.
 ```
 
 ## INSIDE src DIRECTORY
@@ -97,10 +97,11 @@ tsconfig.json: typescript configuration file
 config: where the application, mailing and multer configurations are.
 database: database connection.
 DTOs: where it has other 2 sub-directories for my DTOs files (User and Appointments).
-entities: same 2 sub-directories of DTOs. Here is where the controllers, routing and DB schemas are.
+entities: same 2 sub-directories of DTOs. Here is where the controllers, routing and DB schemas are. There´s also a DiskStorage entity for handling uploads.
 helpers: JWT and Mailing handlers, and date-handling functions.
 interfaces: the interfaces of my entities.
 middlewares: my requests validations directory, a validation results getter and a JWT verifyer.
 types: custom types in here.
-server.ts: main file for running the application
+uploads: where all uploaded images stay.
+server.ts: main file for running the application.
 ```

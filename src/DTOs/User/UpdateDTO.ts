@@ -2,14 +2,15 @@ import generateDate from '../../helpers/generate-date'
 import { TUserDTOReturnData } from '../../types/user'
 
 export default class UpdateDTO {
-	private name: string
-	private email: string
-	private phone: number
-	private password: string
-	private image?: string
 	private updatedAt: Date
 
-	constructor(name: string, email: string, phone: number, password: string, image?: string) {
+	constructor(
+		private name: string,
+		private email: string,
+		private phone: number,
+		private password: string,
+		private image?: string
+	) {
 		this.name = name
 		this.email = email
 		this.phone = phone

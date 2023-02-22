@@ -2,15 +2,16 @@ import { TUserMainData } from '../../types/user'
 import { TAddAppointmentDTO, TDelivered } from '../../types/appointment'
 
 export default class AddAppointmentDTO {
-	private serviceType: string
-	private appointmentDate: Date
-	private client: TUserMainData
 	private delivered: TDelivered
 
-	constructor(serviceType: string, appointmentDate: Date, client: TUserMainData) {
+	constructor(
+		private serviceType: string,
+		private appointmentDate: Date,
+		private client: TUserMainData
+	) {
 		this.serviceType = serviceType
-		this.appointmentDate = new Date(appointmentDate)
 		this.client = client
+		this.appointmentDate = new Date(appointmentDate)
 		this.delivered = { finished: false }
 	}
 
